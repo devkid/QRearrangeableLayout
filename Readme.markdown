@@ -3,8 +3,6 @@ QRearrangeableLayout
 
 Using QSplitter elements to layout the widgets in your main window? This Qt Layout element, written in Python, lets the users rearrange the widgets, so that they can customize your application to there needs and preferences.
 
-Download the python file [here](QRearrangeableLayout.py).
-
 Usage
 -----
 
@@ -55,12 +53,12 @@ However, for useability reasons, there are regions in the widgets the user can't
 If this was a widget, you couldn't drag another widget to the blue regions because otherwise you could not reach all of the green regions where you can drop your widget to. In our example, the user would drop the first list widget to the upper green region of the second list widget.
 
 Now have a look at our example:
-![screenshot 1](doc/screenshot1.png)
+![screenshot 1](https://raw.github.com/devkid/QRearrangeableLayout/master/doc/screenshot1.png)
 
 The user may now start dragging the left list widget:
-![screenshot 2](doc/screenshot2.png)
+![screenshot 2](https://raw.github.com/devkid/QRearrangeableLayout/master/doc/screenshot2.png)
 
 ... and when he reaches the green region (as mentioned above, not in the screenshot), the widgets get rearranged in a new vertical splitter:
-![screenshot 3](doc/screenshot3.png)
+![screenshot 3](https://raw.github.com/devkid/QRearrangeableLayout/master/doc/screenshot3.png)
 
-You can find the source code for the test application [here](doc/test.py).
+You can find the source code for the test application in `doc/test.py`.
