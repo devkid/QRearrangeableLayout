@@ -9,21 +9,25 @@ Usage
 -----
 
 First import the module:
+
 ```python
 from QRearrangeableLayout import QRearrangeableLayout
 ```
 
 Now you can instantiate a QRearrangeableLayout object:
+
 ```python
 rearrangeable = QRearrangeableLayout (app)
 ```
 make sure to give a reference to the appliction as parameter.
 
 After this, you can either create a QSplitter object and set our ``rearrangeable`` as its parent:
+
 ```python
 splitter = QSplitter (Qt.Horizontal, rearrangeable)
 ```
 or you can use a layout to arrange your splitter:
+
 ```python
 boxlayout = QHBoxLayout ()
 rearrangeable.setLayout (boxlayout)
@@ -32,6 +36,7 @@ boxlayout.addWidget (rearrangeable)
 ```
 
 You can now add widgets and other QSplitter elements to our ``splitter``. You may now set up some button or menu entry named »Rearrange« or similar which executes the following upon clicked:
+
 ```python
 rearrangeable.setRearrangeable (True)
 ```
