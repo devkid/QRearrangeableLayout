@@ -49,16 +49,20 @@ Once the user grabbed a widget he can put it everythere he wants in your splitte
 For example: you have two list widgets. The user wants to move the left one to the top of the second one. So he grabs the first list widget and moves the mouse to the top border of the second list widgets. The first widget then gets removed from the old horizontal splitter and a new vertical splitter is automatically created for these both list widgets.
 
 However, for useability reasons, there are regions in the widgets the user can't drag the another widget to:
+
 ![widget](doc/widget.png)
 If this was a widget, you couldn't drag another widget to the blue regions because otherwise you could not reach all of the green regions where you can drop your widget to. In our example, the user would drop the first list widget to the upper green region of the second list widget.
 
 Now have a look at our example:
+
 ![screenshot 1](https://raw.github.com/devkid/QRearrangeableLayout/master/doc/screenshot1.png)
 
 The user may now start dragging the left list widget:
+
 ![screenshot 2](https://raw.github.com/devkid/QRearrangeableLayout/master/doc/screenshot2.png)
 
 ... and when he reaches the green region (as mentioned above, not in the screenshot), the widgets get rearranged in a new vertical splitter:
+
 ![screenshot 3](https://raw.github.com/devkid/QRearrangeableLayout/master/doc/screenshot3.png)
 
 You can find the source code for the test application in `doc/test.py`.
