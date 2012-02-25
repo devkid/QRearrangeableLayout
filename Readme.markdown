@@ -50,7 +50,7 @@ For example: you have two list widgets. The user wants to move the left one to t
 
 However, for useability reasons, there are regions in the widgets the user can't drag the another widget to:
 
-![widget](doc/widget.png)
+![widget](https://raw.github.com/devkid/QRearrangeableLayout/master/doc/widget.png)
 If this was a widget, you couldn't drag another widget to the blue regions because otherwise you could not reach all of the green regions where you can drop your widget to. In our example, the user would drop the first list widget to the upper green region of the second list widget.
 
 Now have a look at our example:
