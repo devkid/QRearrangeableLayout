@@ -146,9 +146,9 @@ class QRearrangeableLayout (QWidget):
 		elif event.type () == QEvent.MouseButtonRelease:
 			self.dragStarting = False
 		
-		elif event.type () == QEvent.MouseMove and
+		elif (event.type () == QEvent.MouseMove and
 		     self.dragStarting and
-		     (event.pos () - self.dragPos).manhattanLength () > QApplication.startDragDistance ():
+		     (event.pos () - self.dragPos).manhattanLength () > QApplication.startDragDistance ()):
 			self.dragStarting = False
 			self.dragRunning = True
 			
@@ -174,8 +174,8 @@ class QRearrangeableLayout (QWidget):
 		# is the widget underneath parented by a QSplitter? if yes, put it there
 		under = self.app.widgetAt (QCursor.pos ())
 		widget = QRearrangeableLayout.findChildOfSplitter (under)
-		if widget in (None, self.dragSource) or
-		   isinstance (widget, QSplitterHandle):
+		if (widget in (None, self.dragSource) or
+		   isinstance (widget, QSplitterHandle)):
 			return
 		splitter = widget.parent ()
 		
@@ -230,10 +230,10 @@ class QRearrangeableLayout (QWidget):
 		# do not remove ourselves just to push us back afterwards
 		indexDrag = splitter.indexOf (self.dragSource)
 		indexWidget = splitter.indexOf (widget)
-		if splitter.orientation () == orientation and
+		if (splitter.orientation () == orientation and
 		   self.dragSource.parent () == splitter and
 		   indexWidget + 1 - before - (self.dragSource.parent () == splitter and
-		   indexDrag < indexWidget) == indexDrag:
+		   indexDrag < indexWidget) == indexDrag):
 			return
 		
 		splitter = self.removeWidget (self.dragSource)
