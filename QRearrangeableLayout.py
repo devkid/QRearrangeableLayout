@@ -89,7 +89,6 @@ class QRearrangeableLayout (QWidget):
 						child.setParent (None)
 						for i in reversed (range (child.count ())):
 							w = child.widget (i)
-							print w
 							w.setParent (None)
 							splitter.addWidget (w)
 						return splitter
