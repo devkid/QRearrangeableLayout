@@ -49,7 +49,7 @@ class QRearrangeableLayout (QWidget):
 	def rearrangeable (self):
 		return self._rearrangeable
 	
-	
+	@staticmethod
 	def removeWidget (self, widget):
 		"""
 		Removes a widget from its parent splitter. If the splitter is left with

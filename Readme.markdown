@@ -142,4 +142,4 @@ like in XML:
 
 Note: At the top level there must be exactly one »s« (splitter) entity. The »w«
 attribute (relative width) might only applied to non-top level entities (both
-splitter and widget). (TODO - will be implemented later)
+splitter and widget).
