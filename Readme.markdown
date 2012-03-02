@@ -134,12 +134,12 @@ like in XML:
 ```xml
 <rearrangeable>
 	<s o="h">
-		<w n="list1" w="0.5"/>
-		<w n="list2" w="0.5"/>
+		<w n="list1" s="0.5"/>
+		<w n="list2" s="0.5"/>
 	</s>
 </rearrangeable>
 ```
 
-Note: At the top level there must be exactly one »s« (splitter) entity. The »w«
-attribute (relative width) might only applied to non-top level entities (both
+Note: At the top level there must be exactly one »s« (splitter) entity. The »s«
+attribute (relative size) might only applied to non-top level entities (both
 splitter and widget).
