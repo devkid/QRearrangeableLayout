@@ -95,7 +95,6 @@ class QRearrangeableLayoutLoader:
 			else:
 				valid = False
 			if valid and not first and s <> -1:
-				print n
 				wstr = n.getAttribute ("s")
 				try:
 					if wstr == "":
@@ -115,7 +114,6 @@ class QRearrangeableLayoutLoader:
 				else:
 					s = p.size ().height ()
 				sizes [i] *= s / ssum
-			print sizes
 			p.setSizes (sizes)
 
 
