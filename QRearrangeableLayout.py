@@ -50,7 +50,7 @@ class QRearrangeableLayout (QWidget):
 		return self._rearrangeable
 	
 	@staticmethod
-	def removeWidget (self, widget):
+	def removeWidget (widget):
 		"""
 		Removes a widget from its parent splitter. If the splitter is left with
 		one or less widgets in it, it is removed from its parent itself and the
@@ -235,7 +235,7 @@ class QRearrangeableLayout (QWidget):
 		   indexDrag < indexWidget) == indexDrag):
 			return
 		
-		splitter = self.removeWidget (self.dragSource)
+		splitter = QRearrangeableLayout.removeWidget (self.dragSource)
 		
 		i = splitter.indexOf (widget)
 		
