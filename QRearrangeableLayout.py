@@ -99,7 +99,8 @@ class QRearrangeableLayout (QWidget):
 					#else:
 					#	pass
 			
-			splitter.setParent (None)
+				else:
+					splitter.setParent (None)
 			
 		return ret
 	
