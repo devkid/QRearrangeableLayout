@@ -27,7 +27,7 @@ class QRearrangeableLayout (QWidget):
 	draggingEnded = pyqtSignal (QWidget, QPoint)
 	
 	
-	def __init__ (self, app, parent = None):
+	def __init__ (self, app, name = "", parent = None):
 		QWidget.__init__ (self, parent)
 		
 		self.app = app
@@ -40,15 +40,16 @@ class QRearrangeableLayout (QWidget):
 		self._rearrangeable = False
 		
 		self.app.installEventFilter (self)
-	
-	
+		
+		self._name = name
+
+
 	def setRearrangeable (self, rearrangeable):
 		self._rearrangeable = bool (rearrangeable)
-	
-	
+
 	def rearrangeable (self):
 		return self._rearrangeable
-	
+
 	@staticmethod
 	def removeWidget (widget):
 		"""
@@ -58,57 +59,56 @@ class QRearrangeableLayout (QWidget):
 		Returns the splitter if there are more then one widgets left in there,
 		otherwise returns the parent of the splitter.
 		"""
-		
+
 		splitter = widget.parent ()
 		if not isinstance (splitter, QSplitter):
 			raise TypeError ("Expecting a widget whose parent is a QSplitter")
 		widget.setParent (None)
 		parent = splitter.parent ()
-		
-		ret = splitter
-		if splitter.count () < 2:
+
+		if splitter.count () > 2:
+			return splitter
+
+		if splitter.count () == 1:
+
 			# the splitter's parent is also a splitter, we only need to need to
 			# move that one remaining widget to the parent
 			if isinstance (parent, QSplitter):
-				if splitter.count () == 1:
-					child = splitter.widget (0)
-					child.setParent (None)
-					parent.insertWidget (parent.indexOf (splitter), child)
-					ret = parent
-			
+				child = splitter.widget (0)
+				child.setParent (None)
+				parent.insertWidget (parent.indexOf (splitter), child)
+
 			# if not: check if the remaining child is another splitter and if
 			# so, change the splitters layout to the one of the remaining
 			# splitter, move it's children to our top level splitter and
 			# remove the remaining splitter afterwards
 			else:
-				if splitter.count () == 1:
-					child = splitter.widget (0)
-					if isinstance (child, QSplitter):
-						ret = child
-						splitter.setOrientation (child.orientation ())
-						child.setParent (None)
-						for i in reversed (range (child.count ())):
-							w = child.widget (i)
-							w.setParent (None)
-							splitter.addWidget (w)
-						return splitter
-					# if we are the top level splitter and the remaining child
-					# isn't a splitter, we must NOT put it standalone into the
-					# splitters parent, because otherwise there wouldn't be any
-					# top level splitter anymore
-					#else:
-					#	pass
-			
-				else:
-					splitter.setParent (None)
-			
-		return ret
-	
-	
+				child = splitter.widget (0)
+				if isinstance (child, QSplitter):
+					sizes = child.sizes ()
+					splitter.setOrientation (child.orientation ())
+					child.setParent (None)
+					widgets = []
+					for i in reversed (range (child.count ())):
+						w = child.widget (i)
+						w.setParent (None)
+						widgets.append (w)
+					for w in reversed (widgets):
+						splitter.addWidget (w)
+					splitter.setSizes (sizes)
+				return splitter
+		
+		if isinstance (parent, QSplitter):
+			splitter.setParent (None)
+			return parent
+		else:
+			return splitter
+
+
 	@staticmethod
 	def findChildOfSplitter (widget):
 		"""
-		Walk up the family tree of the given widget until it finds a widget
+		Walks up the family tree of the given widget until it finds a widget
 		whose parent is a QSplitter.
 		Returns that widget.
 		"""
@@ -119,19 +119,22 @@ class QRearrangeableLayout (QWidget):
 	
 	
 	def eventFilter (self, source, event):
-		
 		# ignore events that aren't going to our widget
 		try:
 			if not self.rect ().contains (event.pos ()):
 				raise
 		except:
 			return QBoxLayout.eventFilter (self, source, event)
-		
-		if not self._rearrangeable:
-			return QBoxLayout.eventFilter (self, source, event)
-		
+
 		if event.type () == QEvent.MouseButtonPress:
+		
 			self.dragSource = QRearrangeableLayout.findChildOfSplitter (source)
+			
+			widget = self.dragSource
+			while widget <> None and not isinstance (widget, QRearrangeableLayout):
+				widget = widget.parent ()
+			if not widget in (None, self) and isinstance (widget, QRearrangeableLayout):
+				return widget.eventFilter (source, event)
 			
 			if self.dragSource <> None:
 				self.dragStarting = True
@@ -159,23 +162,34 @@ class QRearrangeableLayout (QWidget):
 			drag.setHotSpot (self.dragPos)
 			dropAction = drag.start (Qt.MoveAction)
 			
+			self.dragRunning = False
+			
 		return QBoxLayout.eventFilter (self, source, event)
 	
 	
 	def dragEnterEvent (self, e):
-		
-		# only accept dragging events (at least in our RearrangeableLayout) when
-		# we started it manually (see above)
 		e.setAccepted (self.dragRunning)
 	
 	
 	def dragMoveEvent (self, e):
 		
-		# is the widget underneath parented by a QSplitter? if yes, put it there
-		under = self.app.widgetAt (QCursor.pos ())
+		under  = self.app.widgetAt (QCursor.pos ())
+		
+		# check if this event should go to another rearrangeable layout more
+		# nested
+		widget = under
+		while widget <> None and not isinstance (widget, QRearrangeableLayout):
+			widget = widget.parent ()
+		if not widget in (None, self):
+			under = widget
+		
+		if not self.rect ().contains (e.pos ()):
+			return
+		
+		# is the widget underneath a child of a QSplitter? if yes, put it there
 		widget = QRearrangeableLayout.findChildOfSplitter (under)
 		if (widget in (None, self.dragSource) or
-		   isinstance (widget, QSplitterHandle)):
+		    isinstance (widget, QSplitterHandle)):
 			return
 		splitter = widget.parent ()
 		
@@ -188,7 +202,7 @@ class QRearrangeableLayout (QWidget):
 		size = widget.size ()
 		w = size.width ()
 		h = size.height ()
-		d = (pos.x () * h) / w # function value of the diagonal
+		d = pos.x () * h / w # function value of the diagonal
 		
 		cornersize = size / 4
 		ww = w * 3/4
@@ -225,26 +239,21 @@ class QRearrangeableLayout (QWidget):
 			orientation = Qt.Vertical
 		else:
 			orientation = Qt.Horizontal
-		before = direction % 2 == 0
+		before = (direction % 2 == 0)
 		
 		# do not remove ourselves just to push us back afterwards
-		indexDrag = splitter.indexOf (self.dragSource)
-		indexWidget = splitter.indexOf (widget)
-		if (splitter.orientation () == orientation and
-		   self.dragSource.parent () == splitter and
-		   indexWidget + 1 - before - (self.dragSource.parent () == splitter and
-		   indexDrag < indexWidget) == indexDrag):
-			return
+		if (self.dragSource.parent () == splitter):
+			indexDrag   = splitter.indexOf (self.dragSource)
+			indexWidget = splitter.indexOf (widget)
+			indexTarget = indexWidget + 1 - before - (indexDrag < indexWidget)
+			if (splitter.orientation () == orientation and
+			                indexTarget == indexDrag):
+				return
 		
-		splitter = QRearrangeableLayout.removeWidget (self.dragSource)
+		QRearrangeableLayout.removeWidget (self.dragSource)
+		splitter = widget.parent ()
 		
 		i = splitter.indexOf (widget)
-		
-		# this should "nearly" never happen, but it sometimes still does don't
-		# know the reason right now, but it won't go bad if we insert the widget
-		# at the first position
-		if i < 0:
-			i = 0
 		
 		if splitter.orientation () == orientation:
 			
@@ -275,5 +284,6 @@ class QRearrangeableLayout (QWidget):
 	
 	
 	def dropEvent (self, e):
+
 		self.dragRunning = False
 		self.draggingEnded.emit (self.dragSource, e.pos ())
