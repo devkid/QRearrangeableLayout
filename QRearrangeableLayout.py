@@ -117,6 +117,9 @@ class QRearrangeableLayout (QWidget):
 	
 	
 	def eventFilter (self, source, event):
+		if not self._rearrangeable:
+			return QBoxLayout.eventFilter (self, source, event)
+		
 		# ignore events that aren't going to our widget
 		try:
 			if not self.rect ().contains (event.pos ()):
