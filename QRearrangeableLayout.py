@@ -27,7 +27,7 @@ class QRearrangeableLayout (QWidget):
 	draggingEnded = pyqtSignal (QWidget, QPoint)
 	
 	
-	def __init__ (self, app, name = "", parent = None):
+	def __init__ (self, app, parent = None):
 		QWidget.__init__ (self, parent)
 		
 		self.app = app
@@ -40,8 +40,6 @@ class QRearrangeableLayout (QWidget):
 		self._rearrangeable = False
 		
 		self.app.installEventFilter (self)
-		
-		self._name = name
 
 
 	def setRearrangeable (self, rearrangeable):
